@@ -2,6 +2,7 @@ import json
 import requests
 from geopy import distance
 from pprint import pprint
+import folium
 
 
 def fetch_coordinates(apikey, address):
@@ -52,10 +53,29 @@ def create_coffee_list(user_coords, coffee_data):
 def find_nearest(coffee_list):
     if not coffee_list:
         return None
-    #sorted(iterable, key=None, reverse=False)
     nearest = sorted(coffee_list, key=lambda x: x['distance'])
     nearest_5 = nearest[:5]
     return nearest_5
+
+
+def create_map(user_coords, nearest_shops):
+    m = folium.Map(location=[user_coords[1], user_coords[0]], zoom_start=14)
+
+    folium.Marker(
+        location=[user_coords[1], user_coords[0]],
+        popup="Ваше местоположение",
+        icon=folium.Icon(color="red", icon="info-sign")
+    ).add_to(m)
+
+    for shop in nearest_shops:
+        folium.Marker(
+            location=[shop['latitude'], shop['longitude']],
+            popup=shop['title'],
+            icon=folium.Icon(color="green", icon="coffee")
+        ).add_to(m)
+
+    m.save("coffee_map.html")
+
 
 def main():
     api_key = 'a94f575a-f2db-478e-95a6-7d394b964f2c'
@@ -80,11 +100,9 @@ def main():
 
     nearest = find_nearest(coffee_shops)
 
-
-    print("\nБлижайшая кофейня:")
     pprint(nearest, width=40, indent=2, sort_dicts=False)
 
-    #pprint(coffee_shops, width=40, indent=2, sort_dicts=False)
+    create_map(user_coords, nearest)
 
 
 if __name__ == "__main__":
