@@ -1,8 +1,10 @@
 import json
+import os
 import requests
 from geopy import distance
 from pprint import pprint
 import folium
+from dotenv import load_dotenv
 
 
 def fetch_coordinates(apikey, address):
@@ -78,7 +80,13 @@ def create_map(user_coords, nearest_shops):
 
 
 def main():
-    api_key = 'a94f575a-f2db-478e-95a6-7d394b964f2c'
+    load_dotenv()
+
+    api_key = os.getenv('YANDEX_API_KEY')
+
+    if not api_key:
+        print("Не найден YANDEX_API_KEY в .env файле")
+        return
 
     user_address = input("Где вы находитесь? ")
     user_coords = fetch_coordinates(api_key, user_address)
