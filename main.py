@@ -2,7 +2,6 @@ import json
 import os
 import requests
 from geopy import distance
-from pprint import pprint
 import folium
 from dotenv import load_dotenv
 
@@ -95,8 +94,6 @@ def main():
         print("Не удалось определить координаты для указанного адреса")
         return
 
-    print(f"Ваши координаты: {user_coords}")
-
     coffee_data = load_coffee_shops()
     if not coffee_data:
         return
@@ -107,8 +104,6 @@ def main():
         return
 
     nearest = find_nearest(coffee_shops)
-
-    pprint(nearest, width=40, indent=2, sort_dicts=False)
 
     create_map(user_coords, nearest)
 
